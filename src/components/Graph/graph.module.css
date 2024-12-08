@@ -1,0 +1,29 @@
+.node:hover {
+  cursor: pointer;
+}
+
+.node_txt {
+  font-weight: 500;
+  font-size: 1.2rem;
+  pointer-events: none;
+}
+
+.node:hover ~ .node_txt {
+  fill: red;
+}
+
+.likes_txt {
+  width: 100%;
+  font-size: 0;
+  opacity: 0;
+  position: absolute;
+  display: flex;
+  justify-content: center;
+  align-items: end;
+  transition: 0.2s all ease-in-out;
+}
+
+.likes_txt_hover {
+  font-size: 2rem;
+  opacity: 1;
+}

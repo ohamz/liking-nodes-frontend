@@ -1,0 +1,89 @@
+.button {
+  position: fixed;
+  bottom: 40px;
+  right: 40px;
+  width: 65px;
+  height: 65px;
+  background-color: #007bff;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  border: none;
+  text-align: center;
+  padding: 0;
+  overflow: hidden;
+}
+
+.button > p {
+  margin: 0;
+  margin-bottom: 10px;
+  font-size: 50px;
+}
+
+.floating-button:hover {
+  background-color: #0056b3;
+}
+
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease; /* Smooth fade-in effect */
+  z-index: 999;
+}
+
+/* Show the overlay when active */
+.overlay.active {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Pop-Up Container */
+.popup {
+  position: fixed;
+  top: 20px;
+  right: -300px;
+  width: 300px;
+  height: 100%;
+  background-color: darkslategray;
+  /* padding: 2rem; */
+  z-index: 1000;
+  transition: all 0.3s ease;
+}
+
+.popup.active {
+  right: 40px;
+}
+
+.popup_content {
+  padding: 20px;
+}
+
+.popup_header {
+  font-size: 1.5rem;
+  font-weight: bold;
+  margin-bottom: 10px;
+}
+
+.popup_body {
+  margin-bottom: 20px;
+}
+
+.popup_button {
+  background-color: #007bff;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+}
