@@ -5,6 +5,7 @@ import styles from "./graph.module.css";
 import { useState } from "react";
 
 function Graph({ nodes, links }) {
+  const BASE_SIZE = 30;
   const [isHovered, setIsHovered] = useState(false);
   const svgRef = useRef();
 
@@ -25,7 +26,7 @@ function Graph({ nodes, links }) {
         d3
           .forceLink(links)
           .id((d) => d.id)
-          .distance(100)
+          .distance(customLinkDistance)
       )
       .force("charge", d3.forceManyBody())
       .force("center", d3.forceCenter(width / 2, height / 2));
@@ -44,18 +45,16 @@ function Graph({ nodes, links }) {
       .data(nodes)
       .join("circle")
       .attr("class", styles.node)
-      .attr("r", (d) => Math.max(d.likes + 25, 30))
+      .attr("r", (d) => Math.min(Math.max(d.likes + 25, 30), 60))
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
       .on("mouseover", () => setIsHovered(true))
       .on("mouseout", () => setIsHovered(false))
       .on("click", function (event, d) {
-        // Increment likes on click
-        d.likes = (d.likes || 0) + 1;
-
-        // Update radius dynamically
-        d3.select(this).attr("r", Math.max(d.likes + 25, 30));
+        d.likes += 1;
+        d3.select(this).attr("r", Math.min(Math.max(d.likes + 25, 30), 60));
         d3.select(`#text-${d.id}`).text(isHovered ? d.likes : d.id);
+        simulation.alpha(1).restart(); // Restart simulation to update positions
       });
 
     // Add labels
@@ -120,6 +119,12 @@ function Graph({ nodes, links }) {
       <svg ref={svgRef}></svg>
     </>
   );
+}
+
+function customLinkDistance(link) {
+  const endsSize = Math.min(link.source.likes + link.target.likes, 80);
+  const baseDistance = 80;
+  return baseDistance + endsSize;
 }
 
 export default Graph;

@@ -1,14 +1,22 @@
 import Graph from "./components/Graph";
-import FloatingButton from "./components/FloatingButton";
+import AddNode from "./components/AddNode";
 import "./App.css";
 
 function App() {
+  const BASE_SIZE = 30;
+
   const nodes = [
-    { id: 1, name: "Node 1", color: "#f28b82", radius: 30, likes: 0 },
-    { id: 2, name: "Node 2", color: "#fbbc04", radius: 30, likes: 0 },
-    { id: 30, name: "Node 2", color: "#fbbc04", radius: 30, likes: 0 },
-    { id: 4, name: "Node 2", color: "#fbbc04", radius: 40, likes: 10 },
-    { id: 5, name: "Nodededdededed", color: "#fbbc04", radius: 50, likes: 20 },
+    { id: 1, name: "Node 1", color: "#f28b82", radius: BASE_SIZE, likes: 0 },
+    { id: 2, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 0 },
+    { id: 30, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 0 },
+    { id: 4, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 10 },
+    {
+      id: 5,
+      name: "Nodeedede",
+      color: "#fbbc04",
+      radius: BASE_SIZE,
+      likes: 20,
+    },
   ];
 
   const links = [
@@ -22,7 +30,7 @@ function App() {
   return (
     <>
       <Graph nodes={nodes} links={links}></Graph>
-      <FloatingButton />
+      <AddNode />
     </>
   );
 }

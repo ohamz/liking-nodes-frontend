@@ -24,7 +24,7 @@
   font-size: 50px;
 }
 
-.floating-button:hover {
+.button:hover {
   background-color: #0056b3;
 }
 
@@ -34,34 +34,34 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: #00000080;
   opacity: 0;
   visibility: hidden;
-  transition: opacity 0.3s ease; /* Smooth fade-in effect */
+  transition: opacity 0.3s ease;
   z-index: 999;
 }
 
-/* Show the overlay when active */
 .overlay.active {
   opacity: 1;
   visibility: visible;
 }
 
-/* Pop-Up Container */
 .popup {
   position: fixed;
-  top: 20px;
+  top: 0px;
+  bottom: 0px;
   right: -300px;
   width: 300px;
-  height: 100%;
+  height: calc(100% - 4rem);
   background-color: darkslategray;
-  /* padding: 2rem; */
+  border-radius: 20px;
+  margin: 2rem 0;
   z-index: 1000;
   transition: all 0.3s ease;
 }
 
 .popup.active {
-  right: 40px;
+  right: 25px;
 }
 
 .popup_content {

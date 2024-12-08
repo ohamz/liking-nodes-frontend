@@ -1,5 +1,6 @@
 import { useState } from "react";
-import styles from "./floatingButton.module.css";
+import styles from "./addNode.module.css";
+import { transition } from "d3";
 
 function FloatingButton() {
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -8,10 +9,6 @@ function FloatingButton() {
     setPopupVisible(!isPopupVisible);
   };
   return (
-    // <button className={styles.button} onClick={onClick}>
-    //   <p>+</p>
-    // </button>
-
     <div>
       <div
         className={`${styles.overlay} ${isPopupVisible ? styles.active : ""}`}
@@ -22,7 +19,8 @@ function FloatingButton() {
         className={styles.button}
         onClick={togglePopup}
         style={{
-          transform: isPopupVisible ? "scale(0)" : "scale(1)", // Shrinks button when popup is active
+          transform: isPopupVisible ? "scale(0)" : "scale(1)",
+          transition: "0.4s all ease",
         }}
       >
         <p>+</p>
