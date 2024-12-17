@@ -1,13 +1,17 @@
 import { useState } from "react";
 import styles from "./addNode.module.css";
-import { transition } from "d3";
+import { COLORS } from "../../constants/colors";
+import { addNode } from "../../services/api";
 
-function FloatingButton() {
+function AddNode({ addNodeHandler }) {
   const [isPopupVisible, setPopupVisible] = useState(false);
+  const [selectedColor, setSelectedColor] = useState(COLORS[0]);
+  const [selectedSource, setSelectedSource] = useState(1);
 
   const togglePopup = () => {
     setPopupVisible(!isPopupVisible);
   };
+
   return (
     <div>
       <div
@@ -28,18 +32,46 @@ function FloatingButton() {
 
       <div className={`${styles.popup} ${isPopupVisible ? styles.active : ""}`}>
         <div className={styles.popup_content}>
-          <div className={styles.popup_header}>Add New Node</div>
-          <div className={styles.popup_body}>
-            <label htmlFor="color">Pick a Color:</label>
-            <input type="color" id="color" />
-            <br />
-            <label htmlFor="node">Connect to Node:</label>
-            <select id="node">
-              <option value="1">Node 1</option>
-              <option value="2">Node 2</option>
-            </select>
+          <div>
+            <div className={styles.popup_header}>Add New Node</div>
+            <div className={styles.popup_body}>
+              <div className={styles.color_input_box}>
+                <label htmlFor="color">Pick a Color:</label>
+                <div className={styles.color_picker}>
+                  {COLORS.map((color) => (
+                    <div
+                      key={color}
+                      className={`${styles.color_circle} ${
+                        selectedColor === color ? styles.selected : ""
+                      }`}
+                      style={{ backgroundColor: color }}
+                      onClick={() => setSelectedColor(color)}
+                    ></div>
+                  ))}
+                </div>
+              </div>
+              <br />
+              <div className={styles.node_input_box}>
+                <label htmlFor="node">Connect to Node:</label>
+                <input
+                  id="node"
+                  placeholder="Node ID"
+                  required
+                  onChange={(event) => {
+                    setSelectedSource(event.target.value);
+                    console.log(v);
+                  }}
+                ></input>
+              </div>
+            </div>
           </div>
-          <button className={styles.popup_button} onClick={togglePopup}>
+          <button
+            className={styles.popup_button}
+            onClick={() => {
+              togglePopup();
+              addNodeHandler(selectedColor, selectedSource);
+            }}
+          >
             Add
           </button>
         </div>
@@ -48,4 +80,4 @@ function FloatingButton() {
   );
 }
 
-export default FloatingButton;
+export default AddNode;

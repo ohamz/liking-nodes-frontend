@@ -1,36 +1,57 @@
 import Graph from "./components/Graph";
 import AddNode from "./components/AddNode";
 import "./App.css";
+import { useState, useEffect } from "react";
+import { fetchNodes, fetchLinks, addNode, likeNode } from "./services/api";
 
 function App() {
-  const BASE_SIZE = 30;
+  const [nodes, setNodes] = useState([]);
+  const [links, setLinks] = useState([]);
 
-  const nodes = [
-    { id: 1, name: "Node 1", color: "#f28b82", radius: BASE_SIZE, likes: 0 },
-    { id: 2, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 0 },
-    { id: 30, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 0 },
-    { id: 4, name: "Node 2", color: "#fbbc04", radius: BASE_SIZE, likes: 10 },
-    {
-      id: 5,
-      name: "Nodeedede",
-      color: "#fbbc04",
-      radius: BASE_SIZE,
-      likes: 20,
-    },
-  ];
+  // Fetch initial graph data
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const fetchedNodes = await fetchNodes();
+        const fetchedLinks = await fetchLinks();
+        setNodes(fetchedNodes);
+        setLinks(fetchedLinks);
+      } catch (error) {
+        console.error("Error fetching graph data:", error);
+      }
+    };
+    fetchData();
+  }, []);
 
-  const links = [
-    { source: 1, target: 2 },
-    { source: 2, target: 30 },
-    { source: 30, target: 4 },
-    { source: 4, target: 5 },
-    { source: 5, target: 2 },
-  ];
+  // Handle adding a new node
+  const handleAddNode = async (color, sourceId) => {
+    try {
+      const { node, link } = await addNode(color, sourceId);
+      setNodes((prevNodes) => [...prevNodes, node]);
+      setLinks((prevLinks) => [...prevLinks, link]);
+    } catch (error) {
+      console.error("Error adding node:", error);
+    }
+  };
+
+  // Handle liking a node
+  const handleLikeNode = async (nodeId) => {
+    try {
+      const updatedNode = await likeNode(nodeId);
+      setNodes((prevNodes) =>
+        prevNodes.map((node) =>
+          node.id === updatedNode.id ? updatedNode : node
+        )
+      );
+    } catch (error) {
+      console.error("Error liking node:", error);
+    }
+  };
 
   return (
     <>
-      <Graph nodes={nodes} links={links}></Graph>
-      <AddNode />
+      <Graph nodes={nodes} links={links} likeNodeHandler={handleLikeNode} />
+      <AddNode addNodeHandler={handleAddNode} />
     </>
   );
 }

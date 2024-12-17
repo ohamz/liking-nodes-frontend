@@ -9,7 +9,7 @@
 }
 
 .node:hover ~ .node_txt {
-  fill: red;
+  fill: #c8c8c8;
 }
 
 .likes_txt {
