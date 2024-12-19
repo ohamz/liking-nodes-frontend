@@ -12,15 +12,27 @@
   fill: #c8c8c8;
 }
 
+.main_txt,
 .likes_txt {
   width: 100%;
-  font-size: 0;
-  opacity: 0;
+  font-size: 2rem;
+  opacity: 1;
   position: absolute;
   display: flex;
   justify-content: center;
   align-items: end;
-  transition: 0.2s all ease-in-out;
+  transition: 0.25s all ease-in-out;
+  pointer-events: none;
+}
+
+.likes_txt {
+  font-size: 0;
+  opacity: 0;
+}
+
+.main_txt_hover {
+  font-size: 0;
+  opacity: 0;
 }
 
 .likes_txt_hover {

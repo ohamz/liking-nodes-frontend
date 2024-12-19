@@ -3,24 +3,22 @@ import * as d3 from "d3";
 
 import styles from "./graph.module.css";
 import { useState } from "react";
+import { WIDTH, HEIGHT } from "../../App";
+
+export let simulation = null;
 
 function Graph({ nodes, links, likeNodeHandler }) {
   const [isHovered, setIsHovered] = useState(false);
   const svgRef = useRef();
 
   useEffect(() => {
-    const width = window.innerWidth;
-    const height = 600;
-    // var simulation = null;
-
     const svg = d3
       .select(svgRef.current)
-      .attr("width", width)
-      .attr("height", height);
+      .attr("width", WIDTH)
+      .attr("height", HEIGHT);
 
     // Create simulation
-    // if (!simulation) {
-    const simulation = d3
+    simulation = d3
       .forceSimulation(nodes)
       .force(
         "link",
@@ -30,12 +28,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
           .distance(customLinkDistance)
       )
       .force("charge", d3.forceManyBody())
-      .force("center", d3.forceCenter(width / 2, height / 2));
-    // } else {
-    // Update nodes and links
-    // simulation.nodes(nodes);
-    // simulation.force("link").links(links);
-    // }
+      .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2));
 
     // Add links
     const link = svg
@@ -51,25 +44,24 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .data(nodes)
       .join("circle")
       .attr("class", styles.node)
-      .attr("r", (d) => Math.min(Math.max(d.likes + 25, 30), 60))
+      .attr("r", (d) => Math.min(d.likes + 25, 45))
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
       .on("mouseover", (event, d) => {
         setIsHovered(true);
         svg.selectAll("text").text((d) => d.likes);
-        svg.selectAll("circle").style("opacity", 0.75);
+        svg.selectAll("circle").style("opacity", 0.4);
       })
       .on("mouseout", (event, d) => {
         setIsHovered(false);
         svg.selectAll("text").text((d) => d.id);
         svg.selectAll("circle").style("opacity", 1);
       })
-      .on("click", function (event, d) {
-        likeNodeHandler(d.id);
+      .on("click", (event, d) => {
+        likeNodeHandler(d);
         d.likes += 1;
-        d3.select(this).attr("r", Math.min(Math.max(d.likes + 25, 30), 60));
+        d3.select(event.target).attr("r", Math.min(d.likes + 25, 45));
         d3.select(`#text-${d.id}`).text(d.likes);
-        simulation.nodes(updatedNodes);
         simulation.alpha(1).restart();
       });
 
@@ -123,22 +115,28 @@ function Graph({ nodes, links, likeNodeHandler }) {
 
   return (
     <>
-      {
-        <h1
-          className={`${styles.likes_txt} ${
-            isHovered ? styles.likes_txt_hover : ""
-          }`}
-        >
-          Likes are displayed
-        </h1>
-      }
+      <h1
+        className={`${styles.likes_txt} ${
+          isHovered ? styles.likes_txt_hover : ""
+        }`}
+      >
+        Likes are displayed
+      </h1>
+
+      <h1
+        className={`${styles.main_txt} ${
+          isHovered ? styles.main_txt_hover : ""
+        }`}
+      >
+        Click a Node to like it
+      </h1>
       <svg ref={svgRef}></svg>
     </>
   );
 }
 
 function customLinkDistance(link) {
-  const endsSize = Math.min(link.source.likes + link.target.likes, 40);
+  const endsSize = Math.min(link.source.likes + link.target.likes, 20);
   const baseDistance = 80;
   return baseDistance + endsSize;
 }

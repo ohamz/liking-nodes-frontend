@@ -1,7 +1,6 @@
 import { useState } from "react";
 import styles from "./addNode.module.css";
 import { COLORS } from "../../constants/colors";
-import { addNode } from "../../services/api";
 
 function AddNode({ addNodeHandler }) {
   const [isPopupVisible, setPopupVisible] = useState(false);
@@ -59,7 +58,6 @@ function AddNode({ addNodeHandler }) {
                   required
                   onChange={(event) => {
                     setSelectedSource(event.target.value);
-                    console.log(v);
                   }}
                 ></input>
               </div>

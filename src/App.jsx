@@ -1,11 +1,15 @@
 import Graph from "./components/Graph";
 import AddNode from "./components/AddNode";
 import "./App.css";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { fetchNodes, fetchLinks, addNode, likeNode } from "./services/api";
 
+export const WIDTH = window.innerWidth;
+export const HEIGHT = window.innerHeight - 10;
+
 function App() {
-  const [nodes, setNodes] = useState([]);
+  // const [nodes, setNodes] = useState([]);
+  const nodesRef = useRef([]);
   const [links, setLinks] = useState([]);
 
   // Fetch initial graph data
@@ -14,8 +18,9 @@ function App() {
       try {
         const fetchedNodes = await fetchNodes();
         const fetchedLinks = await fetchLinks();
-        setNodes(fetchedNodes);
+        // setNodes(fetchedNodes);
         setLinks(fetchedLinks);
+        nodesRef.current = fetchedNodes;
       } catch (error) {
         console.error("Error fetching graph data:", error);
       }
@@ -27,7 +32,9 @@ function App() {
   const handleAddNode = async (color, sourceId) => {
     try {
       const { node, link } = await addNode(color, sourceId);
-      setNodes((prevNodes) => [...prevNodes, node]);
+      console.log(`Node ${node.id} added.`);
+      nodesRef.current.push(node);
+      // setNodes((prevNodes) => [...prevNodes, node]);
       setLinks((prevLinks) => [...prevLinks, link]);
     } catch (error) {
       console.error("Error adding node:", error);
@@ -35,14 +42,9 @@ function App() {
   };
 
   // Handle liking a node
-  const handleLikeNode = async (nodeId) => {
+  const handleLikeNode = async (node) => {
     try {
-      const updatedNode = await likeNode(nodeId);
-      setNodes((prevNodes) =>
-        prevNodes.map((node) =>
-          node.id === updatedNode.id ? updatedNode : node
-        )
-      );
+      likeNode(node.id);
     } catch (error) {
       console.error("Error liking node:", error);
     }
@@ -50,7 +52,11 @@ function App() {
 
   return (
     <>
-      <Graph nodes={nodes} links={links} likeNodeHandler={handleLikeNode} />
+      <Graph
+        nodes={nodesRef.current}
+        links={links}
+        likeNodeHandler={handleLikeNode}
+      />
       <AddNode addNodeHandler={handleAddNode} />
     </>
   );
