@@ -6,6 +6,7 @@ function AddNode({ addNodeHandler }) {
   const [isPopupVisible, setPopupVisible] = useState(false);
   const [selectedColor, setSelectedColor] = useState(COLORS[0]);
   const [selectedSource, setSelectedSource] = useState(1);
+  const [error, setError] = useState(null);
 
   const togglePopup = () => {
     setPopupVisible(!isPopupVisible);
@@ -61,13 +62,28 @@ function AddNode({ addNodeHandler }) {
                   }}
                 ></input>
               </div>
+              <div
+                className={`${styles.error_box} ${
+                  error ? styles.error_box_show : ""
+                }`}
+              >
+                {error}
+              </div>
             </div>
           </div>
           <button
             className={styles.popup_button}
             onClick={() => {
-              togglePopup();
-              addNodeHandler(selectedColor, selectedSource);
+              console.log(error);
+              addNodeHandler(selectedColor, selectedSource, (errorMessage) => {
+                if (errorMessage) {
+                  setError(errorMessage);
+                  setTimeout(() => setError(null), 2500);
+                } else {
+                  setError(null);
+                  togglePopup();
+                }
+              });
             }}
           >
             Add

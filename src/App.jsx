@@ -29,15 +29,15 @@ function App() {
   }, []);
 
   // Handle adding a new node
-  const handleAddNode = async (color, sourceId) => {
+  const handleAddNode = async (color, sourceId, onError) => {
     try {
       const { node, link } = await addNode(color, sourceId);
       console.log(`Node ${node.id} added.`);
       nodesRef.current.push(node);
-      // setNodes((prevNodes) => [...prevNodes, node]);
       setLinks((prevLinks) => [...prevLinks, link]);
+      onError(null);
     } catch (error) {
-      console.error("Error adding node:", error);
+      onError(error.message || "Something went wrong");
     }
   };
 
