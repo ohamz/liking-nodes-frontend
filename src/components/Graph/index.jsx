@@ -17,7 +17,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
         const node = nodes.find((n) => n.id == id);
         if (node) {
           node.likes = likes;
-          d3.select(`#node-${id}`).attr("r", Math.min(likes + 25, 35));
+          d3.select(`#node-${id}`).attr("r", Math.min(likes + 18, 40));
         }
       }
     },
@@ -61,7 +61,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .join("circle")
       .attr("id", (d) => `node-${d.id}`)
       .attr("class", styles.node)
-      .attr("r", (d) => Math.min(d.likes + 25, 45))
+      .attr("r", (d) => Math.min(d.likes + 18, 40))
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
       .on("mouseover", (event, d) => {
@@ -77,7 +77,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .on("click", (event, d) => {
         likeNodeHandler(d);
         d.likes += 1;
-        d3.select(event.target).attr("r", Math.min(d.likes + 18, 35));
+        d3.select(event.target).attr("r", Math.min(d.likes + 18, 40));
         d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
       });
@@ -156,7 +156,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
 
 function customLinkDistance(link) {
   const endsSize = Math.min(link.source.likes + link.target.likes, 20);
-  const baseDistance = 80;
+  const baseDistance = 60;
   return baseDistance + endsSize;
 }
 
