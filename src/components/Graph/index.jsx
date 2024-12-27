@@ -17,7 +17,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
         const node = nodes.find((n) => n.id == id);
         if (node) {
           node.likes = likes;
-          d3.select(`#node-${id}`).attr("r", Math.min(likes + 25, 45));
+          d3.select(`#node-${id}`).attr("r", Math.min(likes + 25, 35));
         }
       }
     },
@@ -77,7 +77,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .on("click", (event, d) => {
         likeNodeHandler(d);
         d.likes += 1;
-        d3.select(event.target).attr("r", Math.min(d.likes + 25, 45));
+        d3.select(event.target).attr("r", Math.min(d.likes + 18, 35));
         d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
       });
@@ -132,21 +132,23 @@ function Graph({ nodes, links, likeNodeHandler }) {
 
   return (
     <>
-      <h1
-        className={`${styles.likes_txt} ${
-          isHovered ? styles.likes_txt_hover : ""
-        }`}
-      >
-        Likes are displayed
-      </h1>
+      <div className={styles.title_box}>
+        <h1
+          className={`${styles.likes_txt} ${
+            isHovered ? styles.likes_txt_hover : ""
+          }`}
+        >
+          Likes are displayed
+        </h1>
 
-      <h1
-        className={`${styles.main_txt} ${
-          isHovered ? styles.main_txt_hover : ""
-        }`}
-      >
-        Click a Node to like it
-      </h1>
+        <h1
+          className={`${styles.main_txt} ${
+            isHovered ? styles.main_txt_hover : ""
+          }`}
+        >
+          Click a Node to like it
+        </h1>
+      </div>
       <svg ref={svgRef}></svg>
     </>
   );

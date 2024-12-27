@@ -3,8 +3,8 @@
 }
 
 .node_txt {
-  font-weight: 500;
-  font-size: 1.2rem;
+  font-weight: 600;
+  font-size: 18px;
   pointer-events: none;
 }
 
@@ -12,15 +12,25 @@
   fill: #c8c8c8;
 }
 
+.title_box {
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  left: 50%;
+  top: 20px;
+  transform: translate(-50%, 0);
+  background-color: #00000080;
+  padding: 1rem 2rem;
+  border-radius: 30px;
+  pointer-events: none;
+}
+
 .main_txt,
 .likes_txt {
   width: 100%;
   font-size: 2rem;
   opacity: 1;
-  position: absolute;
-  display: flex;
-  justify-content: center;
-  align-items: end;
+  white-space: nowrap;
   transition: 0.25s all ease-in-out;
   pointer-events: none;
 }
