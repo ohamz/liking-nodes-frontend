@@ -64,12 +64,12 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .attr("r", (d) => Math.min(d.likes + 18, 40))
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
-      .on("mouseover", (event, d) => {
+      .on("mouseover touchstart", (event, d) => {
         setIsHovered(true);
         svg.selectAll("text").text((d) => d.likes);
         svg.selectAll("circle").style("opacity", 0.4);
       })
-      .on("mouseout", (event, d) => {
+      .on("mouseout touchend", (event, d) => {
         setIsHovered(false);
         svg.selectAll("text").text((d) => d.id);
         svg.selectAll("circle").style("opacity", 1);
