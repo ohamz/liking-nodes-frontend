@@ -23,7 +23,9 @@ function App() {
   useEffect(() => {
     // Start connection and register listener for add_node events
     try {
-      WebSocketService.connect("ws://localhost:8000/ws");
+      WebSocketService.connect(
+        "wss://liking-nodes-backend-production.up.railway.app/ws"
+      );
       WebSocketService.addListener(handleAddNodeEvent);
     } catch (error) {
       console.error("Error connecting to WebSocket:", error);
