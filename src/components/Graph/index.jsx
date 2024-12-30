@@ -16,11 +16,11 @@ function Graph({ nodes, links, likeNodeHandler }) {
   const handleLikeNodeEvent = useCallback(
     (message) => {
       if (message.event === "like_node") {
-        const { id, likes } = message.data.node;
+        const { id, likes } = message.data;
         const node = nodes.find((n) => n.id == id);
         if (node) {
           node.likes = likes;
-          d3.select(`#node-${id}`).attr("r", Math.min(likes + 18, 40));
+          d3.select(`#node-${id}`).attr("r", (d) => (d.likes % 10) + 25);
         }
       }
     },
@@ -47,10 +47,13 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2));
 
     // Register the listener for like_node events
-    WebSocketService.addListener(handleLikeNodeEvent);
+    WebSocketService.addListener(handleLikeNodeEvent, { passive: true });
+
+    const linkGroup = svg.append("g");
+    const nodeGroup = svg.append("g").attr("class", styles.nodes);
 
     // Add links
-    const link = svg
+    const link = linkGroup
       .selectAll("line")
       .data(links)
       .join("line")
@@ -58,46 +61,50 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .attr("stroke-width", 2);
 
     // Add nodes
-    const node = svg
+    const node = nodeGroup
       .selectAll("circle")
       .data(nodes)
       .join("circle")
       .attr("id", (d) => `node-${d.id}`)
-      .attr("class", styles.node)
-      .attr("r", (d) => Math.min(d.likes + 18, 40))
+      .attr("r", (d) => (d.likes % 10) + 25)
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
       .on("click", (event, d) => {
-        likeNodeHandler(d);
         d.likes += 1;
-        d3.select(event.target).attr("r", Math.min(d.likes + 18, 40));
+        d3.select(event.target).attr("r", (d) => (d.likes % 10) + 25);
         d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
+        likeNodeHandler(d);
       })
       .on("mouseover", (event, d) => {
         setIsHovered(true);
         svg.selectAll("text").text((d) => d.likes);
         svg.selectAll("circle").style("opacity", 0.4);
+        d3.select(event.target)
+          .style("opacity", 0.7)
+          .attr("stroke", "#c8c8c8")
+          .attr("stroke-width", 2);
       })
       .on("mouseout", (event, d) => {
         setIsHovered(false);
         svg.selectAll("text").text((d) => d.id);
         svg.selectAll("circle").style("opacity", 1);
-      })
-      .on("touchstart", (event, d) => {
-        if (isTouchDevice) {
-          setIsHovered(true);
-          d3.select(event.target).style("opacity", 0.4);
-          svg.selectAll("text").text((d) => d.likes);
-        }
-      })
-      .on("touchend", (event, d) => {
-        if (isTouchDevice) {
-          setIsHovered(false);
-          d3.select(event.target).style("opacity", 1);
-          svg.selectAll("text").text((d) => d.id);
-        }
+        d3.select(event.target).attr("stroke", "none").attr("stroke-width", 0);
       });
+    // .on("touchstart", (event, d) => {
+    //   if (isTouchDevice) {
+    //     setIsHovered(true);
+    //     d3.select(event.target).style("opacity", 0.4);
+    //     svg.selectAll("text").text((d) => d.likes);
+    //   }
+    // })
+    // .on("touchend", (event, d) => {
+    //   if (isTouchDevice) {
+    //     setIsHovered(false);
+    //     d3.select(event.target).style("opacity", 1);
+    //     svg.selectAll("text").text((d) => d.id);
+    //   }
+    // });
 
     // Add labels
     svg
@@ -145,6 +152,11 @@ function Graph({ nodes, links, likeNodeHandler }) {
           event.subject.fy = null;
         });
     }
+
+    return () => {
+      WebSocketService.removeListener(handleLikeNodeEvent);
+      svg.selectAll("*").remove();
+    };
   }, [nodes, links]);
 
   return (
@@ -173,7 +185,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
 
 function customLinkDistance(link) {
   const endsSize = Math.min(link.source.likes + link.target.likes, 20);
-  const baseDistance = 60;
+  const baseDistance = 80;
   return baseDistance + endsSize;
 }
 

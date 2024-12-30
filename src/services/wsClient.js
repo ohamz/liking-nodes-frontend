@@ -1,6 +1,7 @@
 export const WebSocketService = (() => {
   let ws;
   const listeners = new Set();
+  let locallyUpdatedNodes = new Set();
 
   const connect = (url) => {
     if (ws) {
@@ -17,7 +18,7 @@ export const WebSocketService = (() => {
     ws.onmessage = (event) => {
       try {
         const message = JSON.parse(event.data);
-        listeners.forEach((listener) => listener(message));
+        processMessage(message);
       } catch (error) {
         console.error("Failed to parse WebSocket message:", error);
       }
@@ -54,9 +55,23 @@ export const WebSocketService = (() => {
 
   const send = (data) => {
     if (ws && ws.readyState == WebSocket.OPEN) {
+      locallyUpdatedNodes.add(data.nodeId);
       ws.send(JSON.stringify(data));
     } else {
       console.error("Websocket is not open.");
+    }
+  };
+
+  // Ignore locally sent messages
+  const processMessage = (message) => {
+    if (
+      message.event === "like_node" &&
+      locallyUpdatedNodes.has(message.data.nodeId)
+    ) {
+      locallyUpdatedNodes.delete(message.data.nodeId);
+      return;
+    } else {
+      listeners.forEach((listener) => listener(message));
     }
   };
 

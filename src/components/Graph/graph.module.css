@@ -1,4 +1,4 @@
-.node:hover {
+.nodes:hover {
   cursor: pointer;
 }
 
@@ -8,8 +8,7 @@
   pointer-events: none;
 }
 
-.node:hover ~ .node_txt,
-.node:active ~ .node_txt {
+.nodes:hover ~ .node_txt {
   fill: #c8c8c8;
 }
 

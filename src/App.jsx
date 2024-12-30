@@ -26,7 +26,7 @@ function App() {
       WebSocketService.connect(
         "wss://liking-nodes-backend-production.up.railway.app/ws"
       );
-      WebSocketService.addListener(handleAddNodeEvent);
+      WebSocketService.addListener(handleAddNodeEvent, { passive: true });
     } catch (error) {
       console.error("Error connecting to WebSocket:", error);
     }
@@ -54,6 +54,12 @@ function App() {
   const handleAddNode = async (color, sourceId, onError) => {
     try {
       const { node, link } = await addNode(color, sourceId);
+
+      // WebSocketService.send({
+      //   event: "add_node",
+      //   data: { node, link },
+      // });
+
       console.log(`Node ${node.id} added.`);
       onError(null);
     } catch (error) {
@@ -64,7 +70,12 @@ function App() {
   // Handle liking a node
   const handleLikeNode = async (node) => {
     try {
-      likeNode(node.id);
+      WebSocketService.send({
+        event: "like_node",
+        data: { id: node.id, likes: node.likes },
+      });
+
+      await likeNode(node.id);
     } catch (error) {
       console.error("Error liking node:", error);
     }
