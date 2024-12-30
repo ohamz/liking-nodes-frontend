@@ -10,6 +10,9 @@ function Graph({ nodes, links, likeNodeHandler }) {
   const [isHovered, setIsHovered] = useState(false);
   const svgRef = useRef();
 
+  const isTouchDevice =
+    "ontouchstart" in window || navigator.maxTouchPoints > 0;
+
   const handleLikeNodeEvent = useCallback(
     (message) => {
       if (message.event === "like_node") {
@@ -64,22 +67,36 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .attr("r", (d) => Math.min(d.likes + 18, 40))
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
-      .on("mouseover touchstart", (event, d) => {
-        setIsHovered(true);
-        svg.selectAll("text").text((d) => d.likes);
-        svg.selectAll("circle").style("opacity", 0.4);
-      })
-      .on("mouseout touchend", (event, d) => {
-        setIsHovered(false);
-        svg.selectAll("text").text((d) => d.id);
-        svg.selectAll("circle").style("opacity", 1);
-      })
       .on("click", (event, d) => {
         likeNodeHandler(d);
         d.likes += 1;
         d3.select(event.target).attr("r", Math.min(d.likes + 18, 40));
         d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
+      })
+      .on("mouseover", (event, d) => {
+        setIsHovered(true);
+        svg.selectAll("text").text((d) => d.likes);
+        svg.selectAll("circle").style("opacity", 0.4);
+      })
+      .on("mouseout", (event, d) => {
+        setIsHovered(false);
+        svg.selectAll("text").text((d) => d.id);
+        svg.selectAll("circle").style("opacity", 1);
+      })
+      .on("touchstart", (event, d) => {
+        if (isTouchDevice) {
+          setIsHovered(true);
+          d3.select(event.target).style("opacity", 0.4);
+          svg.selectAll("text").text((d) => d.likes);
+        }
+      })
+      .on("touchend", (event, d) => {
+        if (isTouchDevice) {
+          setIsHovered(false);
+          d3.select(event.target).style("opacity", 1);
+          svg.selectAll("text").text((d) => d.id);
+        }
       });
 
     // Add labels

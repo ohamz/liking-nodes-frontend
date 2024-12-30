@@ -6,7 +6,7 @@ import { fetchNodes, fetchLinks, addNode, likeNode } from "./services/api";
 import { WebSocketService } from "./services/wsClient";
 
 export const WIDTH = window.innerWidth;
-export const HEIGHT = window.innerHeight - 10;
+export const HEIGHT = window.innerHeight;
 
 function App() {
   const nodesRef = useRef([]);

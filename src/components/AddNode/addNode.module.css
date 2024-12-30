@@ -173,3 +173,11 @@
   font-size: 1rem;
   transition: 0.2s all ease-in-out;
 }
+
+/* Adjust for Mobile */
+@media screen and (max-width: 800px) {
+  .button {
+    bottom: 25px;
+    right: 25px;
+  }
+}
