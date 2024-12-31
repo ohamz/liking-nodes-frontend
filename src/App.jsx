@@ -1,5 +1,6 @@
 import Graph from "./components/Graph";
 import AddNode from "./components/AddNode";
+import Loading from "./components/Loading";
 import "./App.css";
 import { useState, useEffect, useRef, useCallback } from "react";
 import { fetchNodes, fetchLinks, addNode, likeNode } from "./services/api";
@@ -11,6 +12,7 @@ export const HEIGHT = window.innerHeight;
 function App() {
   const nodesRef = useRef([]);
   const [links, setLinks] = useState([]);
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleAddNodeEvent = useCallback((message) => {
     if (message.event === "add_node") {
@@ -52,19 +54,16 @@ function App() {
 
   // Handle adding a new node
   const handleAddNode = async (color, sourceId, onError) => {
+    setIsLoading(true);
     try {
       const { node, link } = await addNode(color, sourceId);
-
-      // WebSocketService.send({
-      //   event: "add_node",
-      //   data: { node, link },
-      // });
 
       console.log(`Node ${node.id} added.`);
       onError(null);
     } catch (error) {
       onError(error.message || "Something went wrong");
     }
+    setIsLoading(false);
   };
 
   // Handle liking a node
@@ -89,6 +88,7 @@ function App() {
         likeNodeHandler={handleLikeNode}
       />
       <AddNode addNodeHandler={handleAddNode} />
+      {isLoading && <Loading />}
     </>
   );
 }

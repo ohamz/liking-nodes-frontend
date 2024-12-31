@@ -4,6 +4,8 @@ const BACKEND_URL = "https://liking-nodes-backend-production.up.railway.app";
 const api = axios.create({ baseURL: BACKEND_URL });
 
 export const fetchNodes = async () => {
+  console.log("FETCHING NODES");
+
   try {
     const response = await api.get("/nodes");
     return response.data;
