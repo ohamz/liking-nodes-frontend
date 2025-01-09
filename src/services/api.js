@@ -5,7 +5,7 @@ const api = axios.create({ baseURL: BACKEND_URL });
 
 export const fetchNodes = async () => {
   try {
-    const response = await api.get("/nodes");
+    const response = await api.get("/nodes/");
     return response.data;
   } catch (error) {
     console.error("Error while fetching nodes", error);
@@ -15,7 +15,7 @@ export const fetchNodes = async () => {
 
 export const fetchLinks = async () => {
   try {
-    const response = await api.get("/links");
+    const response = await api.get("/links/");
     return response.data;
   } catch (error) {
     console.error("Error while fetching links", error);
@@ -36,6 +36,19 @@ export const addNode = async (color, sourceId) => {
   }
 };
 
+export const likeNodesBatch = async (likeData) => {
+  try {
+    const response = await api.put("/nodes/batch/like", {
+      likes: likeData,
+    });
+    return response.data;
+  } catch (error) {
+    console.error("Failed to batch like nodes:", error.message);
+    throw new Error("Failed to batch like nodes");
+  }
+};
+
+// ! Not used anymore, batching likes is more efficient !
 export const likeNode = async (nodeId) => {
   try {
     const response = await api.put(`/nodes/${nodeId}/like`);

@@ -3,8 +3,14 @@ import AddNode from "./components/AddNode";
 import Loading from "./components/Loading";
 import "./App.css";
 import { useState, useEffect, useRef, useCallback } from "react";
-import { fetchNodes, fetchLinks, addNode, likeNode } from "./services/api";
+import {
+  fetchNodes,
+  fetchLinks,
+  addNode,
+  likeNodesBatch,
+} from "./services/api";
 import { WebSocketService } from "./services/wsClient";
+import debounce from "lodash/debounce";
 
 export const WIDTH = window.innerWidth;
 export const HEIGHT = window.innerHeight;
@@ -13,6 +19,7 @@ function App() {
   const nodesRef = useRef([]);
   const [links, setLinks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
+  let likeQueue = {};
 
   const startLoading = () => {
     setIsLoading(true);
@@ -50,12 +57,12 @@ function App() {
         const fetchedLinks = await fetchLinks();
         setLinks(fetchedLinks);
         nodesRef.current = fetchedNodes;
+        endLoading();
       } catch (error) {
         console.error("Error fetching graph data:", error);
       }
     };
     fetchData();
-    endLoading();
 
     return () => {
       WebSocketService.removeListener(handleAddNodeEvent);
@@ -77,6 +84,29 @@ function App() {
     endLoading();
   };
 
+  // Debounced function to process the like queue
+  const processLikeQueue = debounce(async () => {
+    if (Object.keys(likeQueue).length == 0) return;
+
+    const likeData = Object.entries(likeQueue).map(([id, likes]) => ({
+      id: parseInt(id),
+      likes,
+    }));
+
+    try {
+      const updatedNodes = await likeNodesBatch(likeData);
+      updatedNodes.forEach((updatedNode) => {
+        const node = nodesRef.current.find((n) => n.id == updatedNode.id);
+        if (node) {
+          node.likes = updatedNode.likes;
+        }
+      });
+      likeQueue = {};
+    } catch (error) {
+      console.error("Error processing like queue:", error);
+    }
+  }, 3000);
+
   // Handle liking a node
   const handleLikeNode = async (node) => {
     try {
@@ -85,7 +115,13 @@ function App() {
         data: { id: node.id, likes: node.likes },
       });
 
-      await likeNode(node.id);
+      if (likeQueue[node.id]) {
+        likeQueue[node.id] += 1;
+      } else {
+        likeQueue[node.id] = 1;
+      }
+
+      processLikeQueue();
     } catch (error) {
       console.error("Error liking node:", error);
     }
