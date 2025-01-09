@@ -52,13 +52,4 @@
 
 /* Adjust for Mobile */
 @media screen and (max-width: 800px) {
-  .main_txt,
-  .likes_txt {
-    /* width: 100%;
-    font-size: 2rem; */
-    /* opacity: 1;
-    white-space: nowrap;
-    transition: 0.25s all ease-in-out;
-    pointer-events: none;  */
-  }
 }

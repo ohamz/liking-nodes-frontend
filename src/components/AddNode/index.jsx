@@ -74,7 +74,6 @@ function AddNode({ addNodeHandler }) {
           <button
             className={styles.popup_button}
             onClick={() => {
-              console.log(error);
               addNodeHandler(selectedColor, selectedSource, (errorMessage) => {
                 if (errorMessage) {
                   setError(errorMessage);
