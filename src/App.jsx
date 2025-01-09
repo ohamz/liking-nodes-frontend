@@ -14,6 +14,14 @@ function App() {
   const [links, setLinks] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
+  const startLoading = () => {
+    setIsLoading(true);
+  };
+
+  const endLoading = () => {
+    setIsLoading(false);
+  };
+
   const handleAddNodeEvent = useCallback((message) => {
     if (message.event === "add_node") {
       const { node, link } = message.data;
@@ -23,6 +31,8 @@ function App() {
   }, []);
 
   useEffect(() => {
+    startLoading();
+
     // Start connection and register listener for add_node events
     try {
       WebSocketService.connect(
@@ -45,6 +55,7 @@ function App() {
       }
     };
     fetchData();
+    endLoading();
 
     return () => {
       WebSocketService.removeListener(handleAddNodeEvent);
@@ -54,7 +65,7 @@ function App() {
 
   // Handle adding a new node
   const handleAddNode = async (color, sourceId, onError) => {
-    setIsLoading(true);
+    startLoading();
     try {
       const { node, link } = await addNode(color, sourceId);
 
@@ -63,7 +74,7 @@ function App() {
     } catch (error) {
       onError(error.message || "Something went wrong");
     }
-    setIsLoading(false);
+    endLoading();
   };
 
   // Handle liking a node
