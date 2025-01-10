@@ -22,7 +22,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
         const node = nodes.find((n) => n.id == id);
         if (node) {
           node.likes = likes;
-          d3.select(`#node-${id}`).attr("r", (d) => (d.likes % 10) + 25);
+          d3.select(`#node-${id}`).attr("r", (d) => (d.likes % 15) + 25);
         }
       }
     },
@@ -68,12 +68,12 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .data(nodes)
       .join("circle")
       .attr("id", (d) => `node-${d.id}`)
-      .attr("r", (d) => (d.likes % 10) + 25)
+      .attr("r", (d) => (d.likes % 15) + 25)
       .attr("fill", (d) => d.color)
       .call(drag(simulation))
       .on("click", (event, d) => {
         d.likes += 1;
-        d3.select(event.target).attr("r", (d) => (d.likes % 10) + 25);
+        d3.select(event.target).attr("r", (d) => (d.likes % 15) + 25);
         if (!isTouchDevice()) d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
         likeNodeHandler(d);
@@ -181,7 +181,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
 
 function customLinkDistance(link) {
   const endsSize = (link.source.likes + link.target.likes) % 10;
-  const baseDistance = 80;
+  const baseDistance = 70;
   return baseDistance + endsSize;
 }
 
