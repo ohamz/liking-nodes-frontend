@@ -180,7 +180,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
 }
 
 function customLinkDistance(link) {
-  const endsSize = Math.min(link.source.likes + link.target.likes, 20);
+  const endsSize = (link.source.likes + link.target.likes) % 10;
   const baseDistance = 80;
   return baseDistance + endsSize;
 }
