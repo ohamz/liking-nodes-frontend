@@ -10,8 +10,10 @@ function Graph({ nodes, links, likeNodeHandler }) {
   const [isHovered, setIsHovered] = useState(false);
   const svgRef = useRef();
 
-  const isTouchDevice =
+  const isTouchDevice = () =>
     "ontouchstart" in window || navigator.maxTouchPoints > 0;
+  const downEvent = isTouchDevice() ? "pointerdown" : "mouseover";
+  const upEvent = isTouchDevice() ? "pointerup" : "mouseout";
 
   const handleLikeNodeEvent = useCallback(
     (message) => {
@@ -76,35 +78,29 @@ function Graph({ nodes, links, likeNodeHandler }) {
         simulation.alpha(1).restart();
         likeNodeHandler(d);
       })
-      .on("mouseover", (event, d) => {
+      .on(downEvent, (event, d) => {
         setIsHovered(true);
-        svg.selectAll("text").text((d) => d.likes);
+        svg
+          .selectAll("text")
+          .text((d) => d.likes)
+          .style("fill", "#c8c8c8");
         svg.selectAll("circle").style("opacity", 0.4);
         d3.select(event.target)
           .style("opacity", 0.7)
           .attr("stroke", "#c8c8c8")
           .attr("stroke-width", 2);
       })
-      .on("mouseout", (event, d) => {
+      .on(upEvent, (event, d) => {
+        event.preventDefault();
+        event.stopImmediatePropagation();
         setIsHovered(false);
-        svg.selectAll("text").text((d) => d.id);
+        svg
+          .selectAll("text")
+          .text((d) => d.id)
+          .style("fill", "black");
         svg.selectAll("circle").style("opacity", 1);
         d3.select(event.target).attr("stroke", "none").attr("stroke-width", 0);
       });
-    // .on("touchstart", (event, d) => {
-    //   if (isTouchDevice) {
-    //     setIsHovered(true);
-    //     d3.select(event.target).style("opacity", 0.4);
-    //     svg.selectAll("text").text((d) => d.likes);
-    //   }
-    // })
-    // .on("touchend", (event, d) => {
-    //   if (isTouchDevice) {
-    //     setIsHovered(false);
-    //     d3.select(event.target).style("opacity", 1);
-    //     svg.selectAll("text").text((d) => d.id);
-    //   }
-    // });
 
     // Add labels
     svg
