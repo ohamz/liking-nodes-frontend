@@ -74,7 +74,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
       .on("click", (event, d) => {
         d.likes += 1;
         d3.select(event.target).attr("r", (d) => (d.likes % 10) + 25);
-        d3.select(`#text-${d.id}`).text(d.likes);
+        if (!isTouchDevice()) d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(1).restart();
         likeNodeHandler(d);
       })

@@ -8,10 +8,6 @@
   pointer-events: none;
 }
 
-.nodes:hover ~ .node_txt {
-  fill: #c8c8c8;
-}
-
 .title_box {
   position: fixed;
   display: flex;
