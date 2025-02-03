@@ -10,6 +10,8 @@ function Graph({ nodes, links, likeNodeHandler }) {
   const [isHovered, setIsHovered] = useState(false);
   const svgRef = useRef();
 
+  const simulationRef = useRef(null);
+
   const isTouchDevice = () =>
     "ontouchstart" in window || navigator.maxTouchPoints > 0;
   const downEvent = isTouchDevice() ? "pointerdown" : "mouseover";
@@ -45,8 +47,10 @@ function Graph({ nodes, links, likeNodeHandler }) {
           .id((d) => d.id)
           .distance(customLinkDistance)
       )
-      .force("charge", d3.forceManyBody())
+      .force("charge", d3.forceManyBody().strength(-30))
       .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2));
+
+    simulationRef.current = simulation;
 
     // Register the listener for like_node events
     WebSocketService.addListener(handleLikeNodeEvent, { passive: true });
@@ -75,7 +79,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
         d.likes += 1;
         d3.select(event.target).attr("r", (d) => (d.likes % 15) + 25);
         if (!isTouchDevice()) d3.select(`#text-${d.id}`).text(d.likes);
-        simulation.alpha(1).restart();
+        simulation.alpha(0.2).restart();
         likeNodeHandler(d);
       })
       .on(downEvent, (event, d) => {
@@ -174,15 +178,33 @@ function Graph({ nodes, links, likeNodeHandler }) {
           Click a Node to like it
         </h1>
       </div>
+      <button
+        onClick={() => reloadGraph(simulationRef)}
+        className={styles.reloadButton}
+      >
+        &#x21bb;
+      </button>
       <svg ref={svgRef}></svg>
     </>
   );
 }
 
-function customLinkDistance(link) {
+const reloadGraph = (ref) => {
+  ref.current
+    .force("x", d3.forceX(WIDTH / 2).strength(0.15))
+    .force("y", d3.forceY(HEIGHT / 2).strength(0.15))
+    .alpha(0.3)
+    .restart();
+
+  setTimeout(() => {
+    ref.current.force("x", null).force("y", null);
+  }, 300);
+};
+
+const customLinkDistance = (link) => {
   const endsSize = (link.source.likes + link.target.likes) % 10;
   const baseDistance = 70;
   return baseDistance + endsSize;
-}
+};
 
 export default Graph;

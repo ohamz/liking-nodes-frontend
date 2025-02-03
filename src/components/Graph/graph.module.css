@@ -46,6 +46,36 @@
   opacity: 1;
 }
 
+.reloadButton {
+  position: fixed;
+  bottom: 120px;
+  right: 44px;
+  width: 60px;
+  height: 60px;
+  background-color: #fd7e14;
+  color: white;
+  border: none;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 25px;
+  transition: 0.3s ease-in-out;
+}
+
+.reloadButton:hover {
+  background-color: #5936a3;
+  transform: scale(1.1) rotate(360deg);
+}
+
+.reloadButton:active {
+  transform: scale(1.2) rotate(720deg);
+}
+
 /* Adjust for Mobile */
 @media screen and (max-width: 800px) {
+  .reloadButton {
+    bottom: 105px;
+    right: 28px;
+  }
 }
