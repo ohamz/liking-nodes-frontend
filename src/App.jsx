@@ -13,7 +13,7 @@ import { WebSocketService } from "./services/wsClient";
 import debounce from "lodash/debounce";
 
 export const WIDTH = window.innerWidth;
-export const HEIGHT = window.innerHeight;
+export const HEIGHT = window.outerHeight;
 
 function App() {
   const nodesRef = useRef([]);

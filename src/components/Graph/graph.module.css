@@ -78,4 +78,8 @@
     bottom: 105px;
     right: 28px;
   }
+
+  .reloadButton:active {
+    transform: none;
+  }
 }
