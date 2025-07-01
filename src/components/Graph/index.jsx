@@ -11,11 +11,10 @@ function Graph({ nodes, links, likeNodeHandler }) {
   const svgRef = useRef();
 
   const simulationRef = useRef(null);
+  const isMouseDownRef = useRef(false); // Track mouse down state
 
   const isTouchDevice = () =>
     "ontouchstart" in window || navigator.maxTouchPoints > 0;
-  const downEvent = isTouchDevice() ? "pointerdown" : "mouseover";
-  const upEvent = isTouchDevice() ? "pointerup" : "mouseout";
 
   const handleLikeNodeEvent = useCallback(
     (message) => {
@@ -47,7 +46,7 @@ function Graph({ nodes, links, likeNodeHandler }) {
           .id((d) => d.id)
           .distance(customLinkDistance)
       )
-      .force("charge", d3.forceManyBody().strength(-30))
+      .force("charge", d3.forceManyBody().strength(-15))
       .force("center", d3.forceCenter(WIDTH / 2, HEIGHT / 2));
 
     simulationRef.current = simulation;
@@ -81,30 +80,62 @@ function Graph({ nodes, links, likeNodeHandler }) {
         if (!isTouchDevice()) d3.select(`#text-${d.id}`).text(d.likes);
         simulation.alpha(0.2).restart();
         likeNodeHandler(d);
-      })
-      .on(downEvent, (event, d) => {
-        setIsHovered(true);
-        svg
-          .selectAll("text")
-          .text((d) => d.likes)
-          .style("fill", "#c8c8c8");
-        svg.selectAll("circle").style("opacity", 0.4);
-        d3.select(event.target)
-          .style("opacity", 0.7)
-          .attr("stroke", "#c8c8c8")
-          .attr("stroke-width", 2);
-      })
-      .on(upEvent, (event, d) => {
-        event.preventDefault();
-        event.stopImmediatePropagation();
-        setIsHovered(false);
-        svg
-          .selectAll("text")
-          .text((d) => d.id)
-          .style("fill", "black");
-        svg.selectAll("circle").style("opacity", 1);
-        d3.select(event.target).attr("stroke", "none").attr("stroke-width", 0);
       });
+
+    // Handlers for node interaction
+    function handleDown(event, d) {
+      setIsHovered(true);
+      const svg = d3.select(svgRef.current);
+      svg
+        .selectAll("text")
+        .text((d) => d.likes)
+        .style("fill", "#c8c8c8");
+      svg.selectAll("circle").style("opacity", 0.4);
+      d3.select(event.target)
+        .style("opacity", 0.7)
+        .attr("stroke", "#c8c8c8")
+        .attr("stroke-width", 2);
+    }
+
+    function handleUp(event, d) {
+      event.preventDefault?.();
+      event.stopImmediatePropagation?.();
+      setIsHovered(false);
+      const svg = d3.select(svgRef.current);
+      svg
+        .selectAll("text")
+        .text((d) => d.id)
+        .style("fill", "black");
+      svg.selectAll("circle").style("opacity", 1);
+      d3.select(event.target).attr("stroke", "none").attr("stroke-width", 0);
+    }
+
+    // Attach events based on device type
+    if (isTouchDevice()) {
+      node
+        .on("pointerdown", handleDown)
+        .on("pointerup", handleUp);
+    } else {
+      node
+        .on("pointerdown", (event, d) => {
+          isMouseDownRef.current = true;
+          handleDown(event, d);
+        })
+        .on("pointerup", (event, d) => {
+          isMouseDownRef.current = false;
+          handleUp(event, d);
+        })
+        .on("mouseover", (event, d) => {
+          if (!isMouseDownRef.current) {
+            handleDown(event, d);
+          }
+        })
+        .on("mouseout", (event, d) => {
+          if (!isMouseDownRef.current) {
+            handleUp(event, d);
+          }
+        });
+    }
 
     // Add labels
     svg

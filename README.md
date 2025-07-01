@@ -24,12 +24,12 @@ Check out the interactive graph in action!
 1. **Clone the Repository**
 
    ```bash
-   git clone https://github.com/YourUsername/your-frontend-repo.git
+   git clone https://github.com/ohamz/liking-nodes-frontend
 
 2. **Install Dependencies**
 
    Navigate to the project directory and install required packages:
    ```bash
-   cd your-frontend-repo
+   cd liking-nodes-frontend
    npm install
-
+   ```
